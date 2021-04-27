@@ -20,5 +20,12 @@ $f3->route('GET /', function(){
     echo $view->render('views/home.html');
 });
 
+$f3->route('GET /breakfast', function(){
+
+    //Display the home page
+    $view = new Template();
+    echo $view->render('views/breakfast.html');
+});
+
 //Run Fat-Free
 $f3->run();
