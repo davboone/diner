@@ -1,26 +1,45 @@
 <?php
 
-//start session
-session_start();
-
 //This is my controller for the diner project
 
 //Turn on error-reporting
 ini_set('display_errors',1);
 error_reporting(E_ALL);
 
-//Require autoload file
+//Require necessary files
 require_once ('vendor/autoload.php');
+require_once ('/home/dboonegr/config.php');
 
-//Instantiate Fat-Free
+
+//start a session AFTER the autoload***
+session_start();
+
+//Connect to the database
+try{
+    //Instantiate a PDO database object
+    $dbh = new PDO(DB_DSN,DB_USERNAME,DB_PASSWORD);
+    //echo "Connected to the database!";
+}
+catch (PDOException $e){
+    echo $e->getMessage();
+    die("Oh darn! We can't connect to the database");
+}
+
+//Instantiate classes
 $f3 = Base::instance();
+$con = new Controller($f3);
+$datalayer = new DataLayer($dbh);
+
+
+
+//Test my saveOrder method
+//$datalayer->saveOrder(new Order("BLT","lunch","mayo"));
 
 //Define default route
 $f3->route('GET /', function(){
 
-    //Display the home page
-    $view = new Template();
-    echo $view->render('views/home.html');
+    //to make an array global
+    $GLOBALS['con']->home();
 });
 
 $f3->route('GET /breakfast', function(){
@@ -38,37 +57,15 @@ $f3->route('GET /lunch', function(){
 });
 
 $f3->route('GET|POST /order1', function(){
-
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $_SESSION['food'] = $_POST['food'];
-        $_SESSION['meal'] = $_POST['meal'];
-        header('location: order2');
-    }
-
-    //Display the home page
-    $view = new Template();
-    echo $view->render('views/Orderform1.html');
+    $GLOBALS['con']->order1();
 });
 
 $f3->route('GET|POST /order2', function(){
-
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        //Data validation will go here
-
-        $_SESSION['conds'] = implode(", ",$_POST['conds']);
-        header('location: summary');
-    }
-
-    //Display the home page
-    $view = new Template();
-    echo $view->render('views/Orderform2.html');
+    $GLOBALS['con']->order2();
 });
 
 $f3->route('GET /summary', function(){
-
-    //Display the home page
-    $view = new Template();
-    echo $view->render('views/summary.html');
+    $GLOBALS['con']->summary();
 });
 
 //Run Fat-Free

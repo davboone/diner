@@ -8,12 +8,15 @@ class Order
 
     /**
      * Order constructor.
+     * @param string $food - food instance
+     * @param string $condiments - condiments instance
+     * @param string $meal - meal instance
      */
-    public function __construct()
+    public function __construct($food = "", $condiments = "", $meal = "")
     {
-        $this->_food = "";
-        $this->_meal = "";
-        $this->_condiments = "";
+        $this->_food = $food;
+        $this->_meal = $meal;
+        $this->_condiments = $condiments;
     }
 
     /**
